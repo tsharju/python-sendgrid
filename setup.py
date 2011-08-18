@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'python-sendgrid',
-    version = '0.1',
+    version = '0.1.1',
     url = 'http://github.com/tsharju/python-sendgrid',
     license = 'BSD',
     description = 'Library for SendGrid REST API.',
