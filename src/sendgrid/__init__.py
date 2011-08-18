@@ -34,7 +34,7 @@ class SendGridAPI(object):
                            SendGridAPI.FORMAT)
         kwargs.update({'api_user': self.api_user, 'api_key': self.api_key})
 
-        result = json.loads(requests.get(url, kwargs).content)
+        result = json.loads(requests.get(url, params=kwargs).content)
 
         if 'error' in result:
             raise SendGridAPIError(result['error'])
