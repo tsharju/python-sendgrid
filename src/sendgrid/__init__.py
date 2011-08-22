@@ -90,7 +90,7 @@ class SendGridAPI(object):
     def newsletter_lists_email_get(self, list, email=""):
         """Get the email addresses and associated fields for a
         Recipient list."""
-        return self.api_newsletter_lists_email_get(list, email)
+        return self.api_newsletter_lists_email_get(list=list, email=email)
 
     def newsletter_lists_email_delete(self, list, email):
         """Remove one or more emails from a Recipient List."""
@@ -107,6 +107,18 @@ class SendGridAPI(object):
     def newsletter_recipients_delete(self, name, list):
         """Delete Recipient Lists from a Newsletter."""
         return self.api_newsletter_recipients_delete(name=name, list=list)
+
+    def newsletter_schedule_add(self, name, at="", after=""):
+        """Schedule a delivery time for an existing Newsletter."""
+        return self.api_newsletter_schedule_add(name=name, at=at, after=after)
+    
+    def newsletter_schedule_get(self, name):
+        """Retrieve the scheduled delivery time for and existing Newsletter."""
+        return self.api_newsletter_schedule_get(name=name)
+
+    def newsletter_schedule_delete(self, name):
+        """Cancel a scheduled send for a Newsletter."""
+        return self.api_newsletter_schedule_delete(name)
 
     def __getattr__(self, method):
         def get(self, *args, **kwargs):
