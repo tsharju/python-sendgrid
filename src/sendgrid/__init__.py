@@ -4,7 +4,7 @@ import requests
 
 
 class SendGridAPIError(Exception):
-    
+
     def __init__(self, msg):
         self.msg = msg
 
@@ -111,7 +111,7 @@ class SendGridAPI(object):
     def newsletter_schedule_add(self, name, at="", after=""):
         """Schedule a delivery time for an existing Newsletter."""
         return self.api_newsletter_schedule_add(name=name, at=at, after=after)
-    
+
     def newsletter_schedule_get(self, name):
         """Retrieve the scheduled delivery time for and existing Newsletter."""
         return self.api_newsletter_schedule_get(name=name)
