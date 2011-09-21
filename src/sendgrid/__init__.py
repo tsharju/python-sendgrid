@@ -1,6 +1,12 @@
 import json
 import requests
 import re
+import types
+import logging
+
+
+# create logger
+log = logging.getLogger('sendgrid')
 
 
 class SendGridAPIError(Exception):
@@ -24,6 +30,9 @@ class SendGridAPI(object):
         self.api_key = api_key
 
     def call(self, method, **kwargs):
+
+        result_json = None
+
         # newsletter api uses different url structure than other apis
         if method.startswith('api_newsletter'):
             api_method = method.replace('_', '/')
@@ -36,18 +45,22 @@ class SendGridAPI(object):
                                  SendGridAPI.FORMAT)
         kwargs.update({'api_user': self.api_user, 'api_key': self.api_key})
 
-        result = requests.get(url, params=kwargs).content
+        response = requests.get(url, params=kwargs)
+        log.debug("Get request status code: %s" % response.status_code)
+        log.debug("Get response content: %s" % response.content)
+        log.debug("Get request url sent: %s" % response.request.url)
+        log.debug("Get request params sent: %s" % response.request.params)
 
         # if the result doesn't contain json data then parse out the http
         # response message from the document title
         try:
-            result = json.loads(result)
+            result_json = json.loads(response.content)
         except ValueError:
-            result = {'error': re.search(r'<title>([^<]+)</title>', result).group(1)}
+            result_json = {'error': re.search(r'<title>([^<]+)</title>', response).group(1)}
 
-        if 'error' in result:
-            raise SendGridAPIError(result['error'])
-        return result
+        if 'error' in result_json:
+            raise SendGridAPIError(result_json['error'])
+        return result_json
 
     def newsletter_add(self, identity, name, subject, text, html):
         """Create a new Newsletter."""
@@ -89,8 +102,21 @@ class SendGridAPI(object):
         return self.api_newsletter_lists_delete(list=list)
 
     def newsletter_lists_email_add(self, list, data):
-        """Add one or more emails to a Recipient List."""
-        if type(data) == type(dict):
+        """Add one or more emails to a Recipient List.
+
+        Examples:
+
+        Add one recipient::
+            newsletter_lists_email_add('Example List', {'email': 'address1@example.com', 'name': 'Contact Name1'})
+
+        Add multiple recipents::
+            newsletter_lists_email_add('Example List', [{'email': 'address1@example.com', 'name': 'Contact Name1'}, {'email': 'address1@example.com', 'name': 'Contact Name1'}])
+        """
+
+        if isinstance(data, (types.ListType, types.TupleType)):
+            for i, v in enumerate(data):
+                data[i] = json.dumps(v)
+        else:
             data = json.dumps(data)
         return self.api_newsletter_lists_email_add(list=list, data=data)
 
