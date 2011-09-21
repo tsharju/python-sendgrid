@@ -1,6 +1,6 @@
 import json
-
 import requests
+import re
 
 
 class SendGridAPIError(Exception):
@@ -36,7 +36,14 @@ class SendGridAPI(object):
                                  SendGridAPI.FORMAT)
         kwargs.update({'api_user': self.api_user, 'api_key': self.api_key})
 
-        result = json.loads(requests.get(url, params=kwargs).content)
+        result = requests.get(url, params=kwargs).content
+
+        # if the result doesn't contain json data then parse out the http
+        # response message from the document title
+        try:
+            result = json.loads(result)
+        except ValueError:
+            result = {'error': re.search(r'<title>([^<]+)</title>', result).group(1)}
 
         if 'error' in result:
             raise SendGridAPIError(result['error'])
