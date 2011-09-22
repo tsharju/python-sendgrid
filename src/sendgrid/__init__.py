@@ -127,6 +127,26 @@ class SendGridAPI(object):
         """Remove one or more emails from a Recipient List."""
         return self.api_newsletter_lists_email_delete(list=list, email=email)
 
+    def newsletter_identity_add(self, identity, name, email, address, city, state, zip, country):
+        """Create a new Identity."""
+        return self.api_newsletter_lists_email_delete(identity=identity, name=name, email=email, address=address, city=city, state=state, zip=zip, country=country)
+
+    def newsletter_identity_edit(self, identity, name="", email="", address="", city="", state="", zip="", country=""):
+        """Edit an new Identity."""
+        return self.api_newsletter_identity_edit(identity=identity, name=name, email=email, address=address, city=city, state=state, zip=zip, country=country)
+
+    def newsletter_identity_get(self, identity):
+        """Retrieve information associated with a particular Identity."""
+        return self.api_newsletter_identity_get(identity=identity)
+
+    def newsletter_identity_list(self, identity=""):
+        """List all Identities on your account, or check if a particular Identity exists."""
+        return self.api_newsletter_identity_list(identity=identity)
+
+    def newsletter_identity_delete(self, identity):
+        """Remove an Identity from your account."""
+        return self.api_newsletter_identity_delete(identity=identity)
+
     def newsletter_recipients_add(self, name, list):
         """Add Recipient Lists to a Newsletter."""
         return self.api_newsletter_recipients_add(name=name, list=list)
