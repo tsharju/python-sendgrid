@@ -45,18 +45,16 @@ class SendGridAPI(object):
                                  SendGridAPI.FORMAT)
         kwargs.update({'api_user': self.api_user, 'api_key': self.api_key})
 
-        response = requests.get(url, params=kwargs)
+        response = requests.post(url, data=kwargs)
         log.debug("Get request status code: %s" % response.status_code)
-        log.debug("Get response content: %s" % response.content)
         log.debug("Get request url sent: %s" % response.request.url)
         log.debug("Get request params sent: %s" % response.request.params)
 
-        # if the result doesn't contain json data then parse out the http
         # response message from the document title
         try:
             result_json = json.loads(response.content)
         except ValueError:
-            result_json = {'error': re.search(r'<title>([^<]+)</title>', response).group(1)}
+            result_json = {'error': re.search(r'<title>([^<]+)</title>', response.content).group(1)}
 
         if 'error' in result_json:
             raise SendGridAPIError(result_json['error'])
